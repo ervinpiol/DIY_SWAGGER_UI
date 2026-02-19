@@ -71,7 +71,7 @@ export default function ApiDocumentation() {
             <span className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center text-white shadow-sm">
               <Server className="w-5 h-5" />
             </span>
-            Mitsui Financial API
+            Swagger UI API
           </div>
         </div>
 
@@ -144,10 +144,7 @@ export default function ApiDocumentation() {
           )}
 
           <footer className="mt-20 pt-8 border-t border-zinc-200 text-center text-zinc-400 text-sm">
-            <p>
-              © {new Date().getFullYear()} Mitsui Financial Bank API
-              Documentation
-            </p>
+            <p>© {new Date().getFullYear()} Swagger UI API Documentation</p>
           </footer>
         </main>
       </div>
