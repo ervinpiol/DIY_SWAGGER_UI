@@ -34,3 +34,34 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## API Integration
+
+The project includes a typed API client for the User and Admin services.
+
+### Configuration
+
+Create a  file with the following variables:
+
+```bash
+NEXT_PUBLIC_USER_API_URL=http://localhost:8081
+NEXT_PUBLIC_ADMIN_API_URL=http://localhost:8082
+```
+
+### Usage
+
+Import the client from `@/lib/api-client`:
+
+```typescript
+import { authApi } from '@/lib/api-client';
+
+const login = async (email, password) => {
+  try {
+    const response = await authApi.login({ email, password });
+    console.log(response.access_token);
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+# DIY_SWAGGER_UI
