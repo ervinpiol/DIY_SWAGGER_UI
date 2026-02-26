@@ -105,32 +105,48 @@ export const apiSpec: ApiSection[] = [
                   password: {
                     type: "string",
                     description: "User password",
-                    example: "strongpassword123",
+                    example: "Password1!",
                   },
-                  firstName: {
+                  confirm_password: {
                     type: "string",
-                    description: "First name",
-                    example: "John",
+                    description: "Confirm password",
+                    example: "Password1!",
                   },
-                  lastName: {
+                  phone_number: {
                     type: "string",
-                    description: "Last name",
-                    example: "Doe",
+                    description: "Phone number (E.164 format)",
+                    example: "+819012345678",
                   },
                 },
               },
               example: {
                 email: "user@example.com",
-                password: "strongpassword123",
-                firstName: "John",
-                lastName: "Doe",
+                password: "Password1!",
+                confirm_password: "Password1!",
+                phone_number: "+819012345678",
               },
             },
           },
         },
         responses: [
-          { status: 201, description: "User registered successfully" },
-          { status: 400, description: "Invalid input" },
+          {
+            status: 200,
+            description: "User registered successfully",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    user_id: "f718efdd-316a-4a42-a568-7ba184f50c1f",
+                    email: "user@example.com",
+                    message: "User registered successfully",
+                  },
+                  error: null,
+                },
+              },
+            },
+          },
+          { status: 409, description: "User already exists" },
         ],
       },
       {
@@ -146,10 +162,10 @@ export const apiSpec: ApiSection[] = [
                 type: "object",
                 properties: {
                   email: { type: "string", example: "user@example.com" },
-                  password: { type: "string", example: "password123" },
+                  password: { type: "string", example: "Password1!" },
                 },
               },
-              example: { email: "user@example.com", password: "password123" },
+              example: { email: "user@example.com", password: "Password1!" },
             },
           },
         },
@@ -160,11 +176,34 @@ export const apiSpec: ApiSection[] = [
             content: {
               "application/json": {
                 schema: { type: "object" },
-                example: { token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
+                example: {
+                  data: {
+                    access_token: "eyJhbGci...",
+                    refresh_token: "eyJhbGci...",
+                    expires_in: 86400,
+                    refresh_expires_in: 604800,
+                  },
+                  error: null,
+                },
               },
             },
           },
-          { status: 401, description: "Unauthorized" },
+          {
+            status: 401,
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: null,
+                  error: {
+                    code: "AUTH_INVALID_CREDENTIALS",
+                    message: "invalid credentials",
+                  },
+                },
+              },
+            },
+          },
         ],
       },
       {
@@ -173,7 +212,21 @@ export const apiSpec: ApiSection[] = [
         summary: "Logout",
         description: "Invalidate the current session.",
         tags: ["Auth"],
-        responses: [{ status: 200, description: "Logged out successfully" }],
+        responses: [
+          {
+            status: 200,
+            description: "Logged out successfully",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: { success: true },
+                  error: null,
+                },
+              },
+            },
+          },
+        ],
       },
       {
         method: "POST",
@@ -211,7 +264,7 @@ export const apiSpec: ApiSection[] = [
                 type: "object",
                 properties: {
                   token: { type: "string", example: "reset-token-123" },
-                  newPassword: {
+                  new_password: {
                     type: "string",
                     example: "newSecurePassword!",
                   },
@@ -219,14 +272,29 @@ export const apiSpec: ApiSection[] = [
               },
               example: {
                 token: "reset-token-123",
-                newPassword: "newSecurePassword!",
+                new_password: "newSecurePassword!",
               },
             },
           },
         },
         responses: [
           { status: 200, description: "Password reset successful" },
-          { status: 400, description: "Invalid token" },
+          {
+            status: 400,
+            description: "Invalid token",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: null,
+                  error: {
+                    code: "AUTH_RESET_TOKEN_INVALID",
+                    message: "invalid token",
+                  },
+                },
+              },
+            },
+          },
         ],
       },
       {
@@ -244,9 +312,11 @@ export const apiSpec: ApiSection[] = [
               "application/json": {
                 schema: { type: "object" },
                 example: {
-                  balance: 10500.5,
-                  transactions: 12,
-                  notifications: 3,
+                  data: {
+                    message: "dashboard",
+                    user_id: "f718efdd-316a-4a42-a568-7ba184f50c1f",
+                  },
+                  error: null,
                 },
               },
             },
@@ -304,17 +374,32 @@ export const apiSpec: ApiSection[] = [
         summary: "List Wallet Addresses",
         description: "Get a list of registered wallet addresses.",
         tags: ["Wallet"],
+        parameters: [
+          { name: "limit", in: "query", required: false, type: "integer" },
+          { name: "cursor", in: "query", required: false, type: "string" },
+          { name: "sort", in: "query", required: false, type: "string" },
+          { name: "order", in: "query", required: false, type: "string" },
+        ],
         responses: [
           {
             status: 200,
             description: "List of wallets",
             content: {
               "application/json": {
-                schema: { type: "array" },
-                example: [
-                  { id: "w_1", label: "Primary", address: "0x123...abc" },
-                  { id: "w_2", label: "Savings", address: "0x456...def" },
-                ],
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    wallets: [
+                      {
+                        id: "w_1",
+                        label: "Primary",
+                        address: "0x123...abc",
+                        network: "ETH",
+                      },
+                    ],
+                  },
+                  error: null,
+                },
               },
             },
           },
@@ -333,14 +418,33 @@ export const apiSpec: ApiSection[] = [
                 type: "object",
                 properties: {
                   label: { type: "string", example: "My Wallet" },
-                  address: { type: "string", example: "0x789...ghi" },
+                  address: { type: "string", example: "0x123...abc" },
+                  network: { type: "string", example: "ETH" },
                 },
               },
-              example: { label: "My Wallet", address: "0x789...ghi" },
+              example: {
+                label: "My Wallet",
+                address: "0x123...abc",
+                network: "ETH",
+              },
             },
           },
         },
-        responses: [{ status: 201, description: "Wallet added" }],
+        responses: [
+          {
+            status: 201,
+            description: "Wallet added",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: { id: "w_3", success: true },
+                  error: null,
+                },
+              },
+            },
+          },
+        ],
       },
       {
         method: "DELETE",
@@ -396,16 +500,34 @@ export const apiSpec: ApiSection[] = [
               schema: {
                 type: "object",
                 properties: {
-                  username: { type: "string", example: "admin" },
-                  password: { type: "string", example: "adminPass" },
+                  email: { type: "string", example: "superadmin@mfb.com" },
+                  password: { type: "string", example: "sup3rAdm!n" },
                 },
               },
-              example: { username: "admin", password: "adminPass" },
+              example: {
+                email: "superadmin@mfb.com",
+                password: "sup3rAdm!n",
+              },
             },
           },
         },
         responses: [
-          { status: 200, description: "Login successful" },
+          {
+            status: 200,
+            description: "Login successful",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    access_token: "eyJhbGci...",
+                    refresh_token: "eyJhbGci...",
+                  },
+                  error: null,
+                },
+              },
+            },
+          },
           { status: 401, description: "Invalid credentials" },
         ],
       },
@@ -444,18 +566,32 @@ export const apiSpec: ApiSection[] = [
         tags: ["Users"],
         parameters: [
           {
-            name: "page",
-            in: "query",
-            required: false,
-            type: "integer",
-            description: "Page number",
-          },
-          {
             name: "limit",
             in: "query",
             required: false,
             type: "integer",
             description: "Items per page",
+          },
+          {
+            name: "cursor",
+            in: "query",
+            required: false,
+            type: "string",
+            description: "Pagination cursor",
+          },
+          {
+            name: "sort",
+            in: "query",
+            required: false,
+            type: "string",
+            description: "Field to sort by",
+          },
+          {
+            name: "order",
+            in: "query",
+            required: false,
+            type: "string",
+            description: "Sort order (asc/desc)",
           },
         ],
         responses: [{ status: 200, description: "List of users" }],
@@ -464,7 +600,8 @@ export const apiSpec: ApiSection[] = [
         method: "GET",
         path: "/api/v1/users/:id",
         summary: "Get User",
-        description: "Get details of a specific user.",
+        description:
+          "Get details of a specific user including profile and account summary.",
         tags: ["Users"],
         parameters: [
           {
@@ -472,12 +609,39 @@ export const apiSpec: ApiSection[] = [
             in: "path",
             required: true,
             type: "string",
-            description: "User ID",
+            description: "User UUID",
           },
         ],
         responses: [
-          { status: 200, description: "User details found" },
-          { status: 404, description: "User not found" },
+          {
+            status: 200,
+            description: "User details found",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    id: "44444444-4444-...-000000000018",
+                    email: "user20@example.com",
+                    status: "FROZEN",
+                    kyc_status: "PENDING",
+                    profile: {
+                      full_name: "清水 香織",
+                      full_name_kana: "シードユーザー 20",
+                      date_of_birth: "1990-01-19",
+                      postal_code: "118-0001",
+                      address: "東京都大田区...",
+                    },
+                    account: {
+                      id: "55555555-...",
+                      balances: { JPY: "230000" },
+                    },
+                  },
+                  error: null,
+                },
+              },
+            },
+          },
         ],
       },
       {
@@ -487,15 +651,63 @@ export const apiSpec: ApiSection[] = [
         description: "Get account balances for a user.",
         tags: ["Users"],
         parameters: [
+          { name: "id", in: "path", required: true, type: "string" },
+        ],
+        responses: [
           {
-            name: "id",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "User ID",
+            status: 200,
+            description: "Account details",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    id: "55555555-...",
+                    balances: { JPY: "230000" },
+                  },
+                  error: null,
+                },
+              },
+            },
           },
         ],
-        responses: [{ status: 200, description: "Account details" }],
+      },
+      {
+        method: "GET",
+        path: "/api/v1/users/:id/transactions",
+        summary: "Get User Transactions",
+        description: "List transactions for a specific user.",
+        tags: ["Users"],
+        parameters: [
+          { name: "id", in: "path", required: true, type: "string" },
+          { name: "limit", in: "query", required: false, type: "integer" },
+          { name: "cursor", in: "query", required: false, type: "string" },
+        ],
+        responses: [
+          {
+            status: 200,
+            description: "Transaction list",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: {
+                    transactions: [
+                      {
+                        id: "f0100001-...",
+                        type: "DEPOSIT",
+                        amount: "500000",
+                        currency: "JPY",
+                        created_at: "2026-02-17T00:57:50Z",
+                      },
+                    ],
+                  },
+                  error: null,
+                },
+              },
+            },
+          },
+        ],
       },
       {
         method: "POST",
@@ -504,13 +716,7 @@ export const apiSpec: ApiSection[] = [
         description: "Suspend a user account.",
         tags: ["Users"],
         parameters: [
-          {
-            name: "id",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "User ID",
-          },
+          { name: "id", in: "path", required: true, type: "string" },
         ],
         requestBody: {
           content: {
@@ -525,7 +731,21 @@ export const apiSpec: ApiSection[] = [
             },
           },
         },
-        responses: [{ status: 200, description: "User suspended" }],
+        responses: [
+          {
+            status: 200,
+            description: "User suspended",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: { id: "44444444-...", status: "SUSPENDED" },
+                  error: null,
+                },
+              },
+            },
+          },
+        ],
       },
       {
         method: "POST",
@@ -534,15 +754,23 @@ export const apiSpec: ApiSection[] = [
         description: "Freeze a user account.",
         tags: ["Users"],
         parameters: [
+          { name: "id", in: "path", required: true, type: "string" },
+        ],
+        responses: [
           {
-            name: "id",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "User ID",
+            status: 200,
+            description: "User frozen",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: { id: "44444444-...", status: "FROZEN" },
+                  error: null,
+                },
+              },
+            },
           },
         ],
-        responses: [{ status: 200, description: "User frozen" }],
       },
       {
         method: "POST",
@@ -551,15 +779,23 @@ export const apiSpec: ApiSection[] = [
         description: "Re-activate a user account.",
         tags: ["Users"],
         parameters: [
+          { name: "id", in: "path", required: true, type: "string" },
+        ],
+        responses: [
           {
-            name: "id",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "User ID",
+            status: 200,
+            description: "User activated",
+            content: {
+              "application/json": {
+                schema: { type: "object" },
+                example: {
+                  data: { id: "44444444-...", status: "ACTIVE" },
+                  error: null,
+                },
+              },
+            },
           },
         ],
-        responses: [{ status: 200, description: "User activated" }],
       },
       {
         method: "GET",
