@@ -1,0 +1,471 @@
+{
+  "info": {
+    "_postman_id": "5ef91930-8763-48cd-a7ea-36e38fe32da9",
+    "name": "Mitsui Financial Bank",
+    "description": "API collection for Mitsui Financial Bank.\n\n- **User API** runs on port 8081\n    \n- **Admin API** runs on port 8082\n    \n\nSet the `user_token` and `admin_token` variables after logging in.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13068374"
+  },
+  "item": [
+    {
+      "name": "User API",
+      "item": [
+        {
+          "name": "Health",
+          "item": [
+            {
+              "name": "Health Check",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{user_base_url}}/health",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["health"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{user_base_url}}/health",
+                      "host": ["{{user_base_url}}"],
+                      "path": ["health"]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "access-control-allow-headers",
+                      "value": "Accept, Authorization, Content-Type"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"data\": {\n        \"status\": \"healthy\"\n    },\n    \"error\": null\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password1!\",\n  \"confirm_password\": \"Password1!\",\n  \"phone_number\": \"+819012345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/auth/register",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "auth", "register"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"user_id\": \"f718efdd-316a-4a42-a568-7ba184f50c1f\",\n        \"email\": \"user@example.com\",\n        \"message\": \"User registered successfully\"\n    },\n    \"error\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password1!\"\n}"
+                },
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/auth/login",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "auth", "login"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNzE4ZWZkZC0zMTZhLTRhNDItYTU2OC03YmExODRmNTBjMWYiLCJleHAiOjE3NzEzNzQ3MzgsIm5iZiI6MTc3MTI4ODMzOCwiaWF0IjoxNzcxMjg4MzM4fQ.mp7qFFkj0UJscyQda3VuMarLSIb3ryLz6jV5XAnzNJE\",\n        \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNzE4ZWZkZC0zMTZhLTRhNDItYTU2OC03YmExODRmNTBjMWYiLCJleHAiOjE3NzE4OTMxMzgsIm5iZiI6MTc3MTI4ODMzOCwiaWF0IjoxNzcxMjg4MzM4fQ.c0uGfwtBHrbvQIU8Cmn4Jh1kKYla328reGeXpvC2orw\",\n        \"expires_in\": 86400,\n        \"refresh_expires_in\": 604800\n    },\n    \"error\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/auth/logout",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "auth", "logout"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"success\": true\n    },\n    \"error\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Password Reset Request",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/auth/password/reset-request",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "auth", "password", "reset-request"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"message\": \"If the email is registered, a password reset email will be sent.\",\n        \"success\": true\n    },\n    \"error\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Password Reset",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"token\": \"reset-token-here\",\n  \"new_password\": \"NewPassword1!\"\n}"
+                },
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/auth/password/reset",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "auth", "password", "reset"]
+                }
+              },
+              "response": [
+                {
+                  "name": "400",
+                  "status": "Bad Request",
+                  "code": 400,
+                  "body": "{\n    \"data\": null,\n    \"error\": {\n        \"code\": \"AUTH_RESET_TOKEN_INVALID\",\n        \"message\": \"invalid token\"\n    }\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Dashboard",
+          "item": [
+            {
+              "name": "Get Dashboard",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/dashboard",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "dashboard"]
+                }
+              },
+              "response": [
+                {
+                  "name": "200",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"message\": \"dashboard\",\n        \"user_id\": \"f718efdd-316a-4a42-a568-7ba184f50c1f\"\n    },\n    \"error\": null\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "KYC",
+          "item": [
+            {
+              "name": "Get KYC Status",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/kyc/status",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "kyc", "status"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Start KYC",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"phone\": \"+819012345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/kyc/start",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "kyc", "start"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Wallet Addresses",
+          "item": [
+            {
+              "name": "List Wallet Addresses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/wallet-addresses?limit=20&cursor=&sort=created_at&order=desc",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "wallet-addresses"],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Wallet Address",
+              "request": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"address\": \"0x123\", \"label\": \"My Wallet\", \"network\": \"ETH\"}"
+                },
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/wallet-addresses",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "wallet-addresses"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Wallet Address",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{user_base_url}}/api/v1/wallet-addresses/:id",
+                  "host": ["{{user_base_url}}"],
+                  "path": ["api", "v1", "wallet-addresses", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "wallet-address-uuid"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin API",
+      "item": [
+        {
+          "name": "Health",
+          "item": [
+            {
+              "name": "Health Check",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{admin_base_url}}/health",
+                  "host": ["{{admin_base_url}}"],
+                  "path": ["health"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"superadmin@mfb.com\",\n  \"password\": \"sup3rAdm!n\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_base_url}}/api/v1/auth/login",
+                  "host": ["{{admin_base_url}}"],
+                  "path": ["api", "v1", "auth", "login"]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzEzNzU3ODAsImlhdCI6MTc3MTI4OTM4MCwibmJmIjoxNzcxMjg5MzgwLCJyb2xlIjoiQURNSU4iLCJzdWIiOiI5MDM3NjRmNi1mYTQ5LTQwYjAtYTMwYS1mOGM3NTcwNDc3NzkifQ.qyAuj0xGpzr7j_x99jC1O0MZFjV41Gal0Dk3THZn_T8\",\n        \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzE4OTQxODAsImlhdCI6MTc3MTI4OTM4MCwibmJmIjoxNzcxMjg5MzgwLCJyb2xlIjoiQURNSU4iLCJzdWIiOiI5MDM3NjRmNi1mYTQ5LTQwYjAtYTMwYS1mOGM3NTcwNDc3NzkifQ.hr4u1-EQXJuqztE-ZGB6XATgRiqC1wnlG_trqSsAgMA\",\n        \"expires_in\": 86400,\n        \"refresh_expires_in\": 604800\n    },\n    \"error\": null\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "List Users",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_base_url}}/api/v1/users?limit=20&cursor=&sort=created_at&order=desc&status=&kyc_status=&search=",
+                  "host": ["{{admin_base_url}}"],
+                  "path": ["api", "v1", "users"],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Success",
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n    \"data\": {\n        \"users\": [\n            {\n                \"created_at\": \"2026-02-17T00:46:30Z\",\n                \"email\": \"user@example.com\",\n                \"id\": \"d77aed30-8ac6-4cc9-af55-ae8bee249f32\",\n                \"kyc_status\": \"NOT_SUBMITTED\",\n                \"status\": \"ACTIVE\"\n            }\n        ]\n    },\n    \"error\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Get User",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_base_url}}/api/v1/users/:id",
+                  "host": ["{{admin_base_url}}"],
+                  "path": ["api", "v1", "users", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "44444444-4444-4444-4444-000000000018"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
